@@ -334,6 +334,10 @@
                 <div>🧱 压缩多余</div>
                 <span class="mode-desc">把连续的空格合并为一个，强迫症福音。</span>
             </button>
+            <button class="mode-btn" data-mode="keepEn">
+                <div>🌐 中英保留</div>
+                <span class="mode-desc">删中文间空格，保留英文间/中英间的空格。</span>
+            </button>
         </div>
 
         <h3 style="margin-top: 2rem;">状态设置</h3>
@@ -425,6 +429,18 @@
             case 'preserveLines': res = text.replace(/[\t \uFEFF\xA0\u3000]/g, ''); break;
             case 'trim': res = text.split('\n').map(l => l.trim()).join('\n'); break;
             case 'extra': res = text.split('\n').map(l => l.replace(/[ \uFEFF\xA0\u3000]+/g, ' ').trim()).join('\n'); break;
+            case 'keepEn':
+                res = text
+                    .replace(/\r/g, '')                                              // 去掉回车
+                    .replace(/[\t\u00A0\u3000\uFEFF]/g, ' ')                        // 制表符/不换行空格/全角空格/零宽不换行空格 → 普通空格
+                    .split('\n')
+                    .map(l => l
+                        .replace(/ +/g, ' ')                                         // 多个空格合并为一个
+                        .replace(/([\u4e00-\u9fff])\s+([\u4e00-\u9fff])/g, '$1$2')   // 删掉「中文和中文之间」的空格
+                        .trim()                                                      // 去首尾空格
+                    )
+                    .join('\n');
+                break;
             default: res = text;
         }
         return res;
