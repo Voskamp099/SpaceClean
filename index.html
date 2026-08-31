@@ -433,13 +433,10 @@
                 res = text
                     .replace(/\r/g, '')                                              // 去掉回车
                     .replace(/[\t\u00A0\u3000\uFEFF]/g, ' ')                        // 制表符/不换行空格/全角空格/零宽不换行空格 → 普通空格
-                    .split('\n')
-                    .map(l => l
-                        .replace(/ +/g, ' ')                                         // 多个空格合并为一个
-                        .replace(/([\u4e00-\u9fff])\s+([\u4e00-\u9fff])/g, '$1$2')   // 删掉「中文和中文之间」的空格
-                        .trim()                                                      // 去首尾空格
-                    )
-                    .join('\n');
+                    .replace(/\n/g, ' ')                                            // 换行 → 空格（彻底删除所有换行）
+                    .replace(/ +/g, ' ')                                            // 多个空格合并为一个
+                    .replace(/([\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])/g, '$1')       // 删掉「中文和中文之间」的空格
+                    .trim();                                                         // 去首尾空格
                 break;
             default: res = text;
         }
