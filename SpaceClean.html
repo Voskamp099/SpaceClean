@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打工人的提效神器 | SpaceClean Pro</title>
+    <style>
+        :root {
+            /* 赛博/深色风格 */
+            --bg-body: #0f172a;      /* Deep Slate */
+            --bg-card: #1e293b;      /* Lighter Slate */
+            --bg-input: #0f172a;     /* Input background */
+            
+            --accent: #38bdf8;       /* Neon Blue */
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            
+            --success: #34d399;      /* Neon Green */
+            --danger: #f472b6;       /* Neon Pink */
+            
+            --text-main: #f1f5f9;    /* Slate 100 */
+            --text-muted: #94a3b8;   /* Slate 400 */
+            
+            --border: #334155;
+            
+            --shadow-glow: 0 0 15px rgba(56, 189, 248, 0.15);
+            
+            --radius-lg: 16px;
+            --radius-md: 8px;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* 细微的网格背景 */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-board {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: var(--success);
+            padding: 5px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--success);
+            font-size: 0.9rem;
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+        }
+
+        /* Layout */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+            flex: 1;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            main { grid-template-columns: 1fr; }
+            aside { order: -1; }
+        }
+
+        /* Sidebar */
+        aside {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .mode-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+        }
+
+        .mode-btn.active {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .mode-desc {
+            display: block;
+            font-size: 0.75rem;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
+        /* Workspace */
+        .editor-grid {
+            display: grid;
+            grid-template-rows: 1fr auto 1fr;
+            gap: 1rem;
+            height: calc(100vh - 180px);
+            min-height: 600px;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .panel:focus-within {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .panel-header {
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        textarea {
+            flex: 1;
+            background: var(--bg-input);
+            color: var(--text-main);
+            border: none;
+            padding: 20px;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+        }
+
+        /* Middle Action Bar */
+        .middle-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #0f172a;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .action-btn.primary:hover {
+            background: #7dd3fc;
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        /* Stats Badge */
+        .stat-tag {
+            font-family: monospace;
+            background: #000;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        /* Toast Message (The Motivator) */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .toast-card {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--accent);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .toast-card.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast-content strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .toast-content p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+            line-height: 1.4;
+        }
+
+        /* Animation for badge */
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        .pulse-success {
+            animation: pulse-green 1s;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        SpaceClean <span style="font-weight:300; font-size: 0.8em; opacity: 0.7; color:white;">PRO</span>
+    </div>
+    <div class="score-board" id="scoreBoard">摸鱼积分: 0</div>
+</header>
+
+<main>
+    <aside>
+        <h3>清理模式</h3>
+        <div id="modeContainer">
+            <button class="mode-btn active" data-mode="all">
+                <div>✨ 全部去除</div>
+                <span class="mode-desc">删光所有空格、换行，最极致的压缩。</span>
+            </button>
+            <button class="mode-btn" data-mode="preserveLines">
+                <div>📝 保留换行</div>
+                <span class="mode-desc">保留段落结构，只去除多余的杂乱。</span>
+            </button>
+            <button class="mode-btn" data-mode="trim">
+                <div>✂️ 首尾修剪</div>
+                <span class="mode-desc">去除每行开头结尾，保留整齐排版。</span>
+            </button>
+            <button class="mode-btn" data-mode="extra">
+                <div>🧱 压缩多余</div>
+                <span class="mode-desc">把连续的空格合并为一个，强迫症福音。</span>
+            </button>
+        </div>
+
+        <h3 style="margin-top: 2rem;">状态设置</h3>
+        <div style="display: flex; align-items: center; justify-content: space-between; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;">
+            <span>⚡ 实时处理</span>
+            <input type="checkbox" id="realTimeCheck" checked style="accent-color: var(--accent); transform: scale(1.2);">
+        </div>
+        <button class="action-btn" id="manualTrigger" style="width:100%; justify-content: center; display:none;">
+            立即执行
+        </button>
+    </aside>
+
+    <section class="editor-grid">
+        <!-- Input -->
+        <div class="panel">
+            <div class="panel-header">
+                <span>原始文本 (INPUT)</span>
+                <span class="stat-tag" id="inputLen">0</span>
+            </div>
+            <textarea id="inputArea" placeholder="在这里粘贴那些乱七八糟的文字吧..."></textarea>
+        </div>
+
+        <!-- Middle Actions -->
+        <div class="middle-bar">
+            <button class="action-btn" id="clearBtn">
+                🗑️ 清空
+            </button>
+            <button class="action-btn primary" id="processActionBtn">
+                🚀 开始清理
+            </button>
+            <button class="action-btn" id="copyBtn">
+                📋 复制结果
+            </button>
+        </div>
+
+        <!-- Output -->
+        <div class="panel">
+            <div class="panel-header">
+                <span>清理结果 (OUTPUT)</span>
+                <span class="stat-tag" id="outputLen">0</span>
+            </div>
+            <textarea id="outputArea" readonly placeholder="这里会出现干净清爽的成果..."></textarea>
+        </div>
+    </section>
+</main>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+    // 震撼的打工人语录库
+    const quotes = [
+        "删掉了多余的空格，就像删掉了多余的焦虑。",
+        "每清理 1000 个字符，离下班就更近一步。",
+        "格式化的是文本，整顿的是心情。",
+        "哪怕生活有缝隙，文本也可以没有。",
+        "少即是多，简单即是高效。今晚不加班！",
+        "保持整洁，不仅是为了代码，更是为了尊严。",
+        "这一刻，你掌控了文本，而不是被文本掌控。",
+        "又解决了一个小麻烦，给自己点个赞！",
+        "简洁，是成年人最大的体面。",
+        "又是为职场效率添砖加瓦的一天 🧱"
+    ];
+
+    // 状态管理
+    const state = {
+        mode: 'all',
+        score: 0,
+        lastCleanedCount: 0
+    };
+
+    // DOM
+    const inputArea = document.getElementById('inputArea');
+    const outputArea = document.getElementById('outputArea');
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const realTimeCheck = document.getElementById('realTimeCheck');
+    const manualTrigger = document.getElementById('manualTrigger');
+    const inputLen = document.getElementById('inputLen');
+    const outputLen = document.getElementById('outputLen');
+    const scoreBoard = document.getElementById('scoreBoard');
+    const processBtn = document.getElementById('processActionBtn');
+    const toastContainer = document.getElementById('toastContainer');
+
+    // 核心功能
+    function cleanText(text, mode) {
+        if (!text) return '';
+        let res = '';
+        switch(mode) {
+            case 'all': res = text.replace(/[\s\uFEFF\xA0\u3000]/g, ''); break;
+            case 'preserveLines': res = text.replace(/[\t \uFEFF\xA0\u3000]/g, ''); break;
+            case 'trim': res = text.split('\n').map(l => l.trim()).join('\n'); break;
+            case 'extra': res = text.split('\n').map(l => l.replace(/[ \uFEFF\xA0\u3000]+/g, ' ').trim()).join('\n'); break;
+            default: res = text;
+        }
+        return res;
+    }
+
+    function updateStats(inLen, outLen) {
+        inputLen.textContent = inLen;
+        outputLen.textContent = outLen;
+        
+        const diff = inLen - outLen;
+        if (diff > 0) {
+            outputLen.style.color = 'var(--success)';
+            outputLen.style.borderColor = 'var(--success)';
+            outputLen.style.boxShadow = '0 0 5px var(--success)';
+        } else {
+            outputLen.style.color = 'var(--text-muted)';
+            outputLen.style.borderColor = 'transparent';
+            outputLen.style.boxShadow = 'none';
+        }
+        return diff;
+    }
+
+    function updateScore(count) {
+        // 每清理一个字符得1分
+        if (count > 0) {
+            state.score += count;
+            scoreBoard.textContent = `摸鱼积分: ${state.score}`;
+            scoreBoard.classList.remove('pulse-success');
+            void scoreBoard.offsetWidth; // trigger reflow
+            scoreBoard.classList.add('pulse-success');
+        }
+    }
+
+    function showToast(isSuccess = true) {
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast-card';
+        toast.innerHTML = `
+            <div class="toast-icon">${isSuccess ? '🔥' : '⚠️'}</div>
+            <div class="toast-content">
+                <strong>效率提升中...</strong>
+                <p>${randomQuote}</p>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // 动画进场
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+
+        // 自动销毁
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
+    function executeProcess() {
+        const raw = inputArea.value;
+        const cleaned = cleanText(raw, state.mode);
+        outputArea.value = cleaned;
+        
+        const diff = updateStats(raw.length, cleaned.length);
+        
+        // 只有在真正清理了内容且非实时模式下（或者是点击按钮触发）才给强力反馈
+        if (diff > 0) {
+            updateScore(diff);
+            // 只有当用户手动触发或者清理量较大时才弹toast，避免实时处理太吵
+            if (!realTimeCheck.checked || diff > 50) {
+                showToast(true);
+            }
+        }
+    }
+
+    // 事件监听
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            modeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.mode = btn.dataset.mode;
+            if (realTimeCheck.checked) executeProcess();
+        });
+    });
+
+    realTimeCheck.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            manualTrigger.style.display = 'none';
+            executeProcess();
+        } else {
+            manualTrigger.style.display = 'flex';
+        }
+    });
+
+    inputArea.addEventListener('input', () => {
+        if (realTimeCheck.checked) executeProcess();
+    });
+
+    manualTrigger.addEventListener('click', () => executeProcess());
+    processBtn.addEventListener('click', () => executeProcess());
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        inputArea.value = '';
+        outputArea.value = '';
+        updateStats(0, 0);
+        showToast(false); // 清空时给个小提示
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+        if (!outputArea.value) return;
+        try {
+            await navigator.clipboard.writeText(outputArea.value);
+            const originalText = document.getElementById('copyBtn').innerHTML;
+            document.getElementById('copyBtn').innerHTML = '✅ 已复制';
+            setTimeout(() => {
+                document.getElementById('copyBtn').innerHTML = originalText;
+            }, 1500);
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
+    });
+
+</script>
+</body>
+</html>
