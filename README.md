@@ -1,5 +1,7 @@
 # SpaceClean Pro
 
+[English](README.en.md) · [简体中文](README.md)
+
 打工人的提效小工具 —— 专门对付「从 Codex / 各种地方复制文本时混进来的乱七八糟空格」。
 
 纯前端单文件 HTML（入口为 `index.html`），双击即用，无需任何依赖或服务器。
