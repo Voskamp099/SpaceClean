@@ -22,6 +22,8 @@ Online version: https://voskamp099.github.io/SpaceClean/
   between English words and between English and Chinese, and remove line breaks so the
   result reads as one paragraph. Built for text that mixes the two scripts.
 - **Trim** — strip leading and trailing whitespace on every line, keeping the layout tidy.
+- **Remove asterisks** — strip every Markdown asterisk (`*`) from text pasted out of AI
+  assistants, leaving spaces, line breaks and every other character exactly as they are.
 - **Live or manual** — clean as you paste, or switch the trigger to manual.
 - **Points and encouragement** — one point per character cleaned, with a line of
   encouragement each time you run it.
