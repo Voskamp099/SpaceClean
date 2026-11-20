@@ -340,6 +340,10 @@
                 <div>🌐 中英保留</div>
                 <span class="mode-desc">删中文间空格，保留英文间/中英间的空格。</span>
             </button>
+            <button class="mode-btn" data-mode="noAsterisk">
+                <div>⭐ 去除星号</div>
+                <span class="mode-desc">删掉所有 Markdown 星号 (*)，其余原样保留。</span>
+            </button>
         </div>
 
         <h3 style="margin-top: 2rem;">状态设置</h3>
@@ -440,6 +444,10 @@
                     .replace(/ +/g, ' ')                                            // 多个空格合并为一个
                     .replace(/([\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])/g, '$1')       // 删掉「中文和中文之间」的空格
                     .trim();                                                         // 去首尾空格
+                break;
+            case 'noAsterisk':
+                // 只删星号本身，其余（空格、换行、斜杠、井号等）全部原样保留。
+                res = text.replace(/\*/g, '');
                 break;
             default: res = text;
         }
