@@ -1,31 +1,41 @@
 # SpaceClean Pro
 
-[English](README.en.md) · [简体中文](README.md)
+> **Language:** the [live app](https://voskamp099.github.io/SpaceClean/) opens in English by default. For Simplified Chinese, open it with `?lang=zh` or use the 中文 badge in the bottom-left corner. The language layer changes only on-screen text.
 
-打工人的提效小工具 —— 专门对付「从 Codex / 各种地方复制文本时混进来的乱七八糟空格」。
+A small text-cleanup tool for people who keep pasting text out of code editors, chat
+windows and AI assistants — the kind that arrives with stray spaces, tabs and line
+breaks in the wrong places.
 
-纯前端单文件 HTML（入口为 `index.html`），双击即用，无需任何依赖或服务器。
+One self-contained HTML file (`index.html`). Double-click it, no install, no server,
+no dependencies.
 
-在线版：https://voskamp099.github.io/SpaceClean/
+Online version: https://voskamp099.github.io/SpaceClean/
 
-## 功能
+[English](README.md) · [简体中文](README.zh-CN.md)
 
-- **✨ 全部去除**：删光所有空格、换行、制表符，极致压缩。
-- **📝 保留换行**：只去行内杂乱空格，保留段落结构。
-- **🧱 压缩多余**：把连续的空格合并成一个，强迫症福音。
-- **🌐 中英保留**：删掉中文和中文之间的空格，但保留英文与英文、英文与中文之间的空格；并删除所有换行，输出为一整段（适合中英混排的文本）。
-- **✂️ 首尾修剪**：去除每行开头结尾的空白，保留整齐排版。
-- **⚡ 实时处理**：粘贴即清理，也可关掉开关改成手动触发。
-- **摸鱼积分 + 打工人语录**：清理一个字符得 1 分，每清一次弹一句鼓励。
+## Modes
 
-## 用法
+- **Strip everything** — remove every space, newline and tab. Maximum compression.
+- **Keep line breaks** — clean up spacing inside lines while keeping the paragraph structure.
+- **Collapse** — squeeze runs of spaces down to one.
+- **Mixed CJK and Latin** — drop the spaces between Chinese characters, keep the spaces
+  between English words and between English and Chinese, and remove line breaks so the
+  result reads as one paragraph. Built for text that mixes the two scripts.
+- **Trim** — strip leading and trailing whitespace on every line, keeping the layout tidy.
+- **Live or manual** — clean as you paste, or switch the trigger to manual.
+- **Points and encouragement** — one point per character cleaned, with a line of
+  encouragement each time you run it.
 
-直接用浏览器打开 `index.html`（或上面的在线版链接）：
+## Use
 
-1. 左侧选清理模式；
-2. 在 INPUT 框粘贴乱糟糟的文本；
-3. 右侧 OUTPUT 自动出干净结果，点「📋 复制结果」拿走。
+Open `index.html` in a browser, or use the online link:
 
-## 截图
+1. Pick a mode on the left.
+2. Paste the messy text into the INPUT box.
+3. The OUTPUT box fills in as you type — copy the result with the copy button.
 
-（欢迎 PR 一张使用截图 :P）
+## Notes
+
+- Everything runs in the browser. Nothing is uploaded, nothing is stored on a server.
+- The tool is deliberately small and single-file so it keeps working when copied to
+  another machine.
